@@ -9,6 +9,7 @@ from flask import render_template
 from flask import request
 from flask import url_for
 from flask import session
+
 from jia import db
 from jia.models import User
 
@@ -37,8 +38,7 @@ def http_scheme():
 def require_auth(fn):
   @functools.wraps(fn)
   def decorated(*args, **kwargs):
-    authenticated = False
-    if not 'user' in session:
+    if current_app.config['ENABLE_GOOGLE_AUTH'] and not 'user' in session:
       params = dict(response_type='code',
                     scope=' '.join(scope),
                     client_id=current_app.config['GOOGLE_CLIENT_ID'],

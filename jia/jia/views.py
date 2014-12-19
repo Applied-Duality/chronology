@@ -36,11 +36,13 @@ def index():
   else:
     template = os.path.join('build', 'index.html')
 
-  user = User.query.get(session['user'])
-  wanted_data = ['picture', 'name', 'locale', 'email', 'id', 'hd']
+  user_id = session.get('user')
   user_dict = {}
-  for key in wanted_data:
-    user_dict[key] = getattr(user, key)
+  if user_id:
+    user = User.query.get(session['user'])
+    wanted_data = ['picture', 'name', 'locale', 'email', 'id', 'hd']
+    for key in wanted_data:
+      user_dict[key] = getattr(user, key)
   user_dict = json.dumps(user_dict)
   return render_template(template, pycode=allow_pycode, user=user_dict)
 
@@ -78,8 +80,8 @@ def infer_schema(stream_name=None):
   schema = kc.infer_schema(stream_name,
                            namespace=current_app.config['KRONOS_NAMESPACE'])
   return schema
-   
-   
+
+
 @app.route('/boards', methods=['GET'])
 @json_endpoint
 @require_auth
